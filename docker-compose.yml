@@ -9,10 +9,19 @@ services:
             - ./app:/var/www/html
         networks:
             - web_php
+        environment:
+            MYSQL_HOST: ${MYSQL_HOST}
+            MYSQL_PORT: ${MYSQL_PORT}
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+            REDIST_HOST: ${REDIST_HOST}
+            REDIST_PORT: ${REDIST_PORT}
 
     web:
         container_name: nginx
-        image: nginx:latest
+        build:
+            dockerfile: ./docker/nginx/DockerFile
         ports:
             - '80:80'
         volumes: 
@@ -27,14 +36,21 @@ services:
             - '3306:3306'
         restart: unless-stopped
         environment:
-            MYSQL_ROOT_PASSWORD: 'password'
+            MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
             MYSQL_ROOT_HOST: "%"
-            MYSQL_DATABASE: 'my_php'
-            MYSQL_USER: 'root'
-            MYSQL_PASSWORD: 'password'
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
             MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
         volumes:
             - mariadbdata:/var/lib/mysql
+        networks:
+            - web_php
+
+    #redis
+    cache:
+        container_name: redis
+        image: redis:latest
         networks:
             - web_php
     
