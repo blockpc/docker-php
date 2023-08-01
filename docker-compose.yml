@@ -1,0 +1,45 @@
+version: '3'
+services:
+    app:
+        container_name: app
+        build:
+            dockerfile: ./docker/php/DockerFile
+        volumes: 
+            - ./app:/app
+        networks:
+            - web_php
+
+    web:
+        container_name: nginx
+        image: nginx:latest
+        ports:
+            - '80:80'
+        volumes: 
+            - ./docker/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+        networks:
+            - web_php
+            
+    mariadb:
+        container_name: mariadb
+        image: 'mariadb:10'
+        ports:
+            - '3306:3306'
+        restart: unless-stopped
+        environment:
+            MYSQL_ROOT_PASSWORD: 'password'
+            MYSQL_ROOT_HOST: "%"
+            MYSQL_DATABASE: 'my_php'
+            MYSQL_USER: 'root'
+            MYSQL_PASSWORD: 'password'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+        volumes:
+            - mariadbdata:/var/lib/mysql
+        networks:
+            - web_php
+    
+volumes:
+    mariadbdata:
+
+networks:
+    web_php:
+        driver: bridge
