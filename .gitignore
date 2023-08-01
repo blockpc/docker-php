@@ -1,4 +1,2 @@
-Docker.txt
 /app/vendor
-/src/**/*
 .env
