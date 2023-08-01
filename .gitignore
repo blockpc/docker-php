@@ -1,5 +1,4 @@
-./Docker.txt
-./docker-compose.yml
+Docker.txt
 /app/vendor
-/app/src/**
+/src/**/*
 .env
